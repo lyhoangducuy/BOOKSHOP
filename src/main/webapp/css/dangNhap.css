@@ -1,0 +1,17 @@
+/* Căn giữa form cả ngang + dọc */
+.center-box {
+    min-height: 100vh;              /* full chiều cao viewport */
+    display: flex;
+    justify-content: center;        /* căn ngang */
+    align-items: center;            /* căn dọc */
+    background: #f2f2f2;           /* optional: nền sáng */
+}
+
+/* Style cho form */
+.login-form {
+    width: 360px;                   /* vừa phải trên mobile */
+    padding: 30px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
