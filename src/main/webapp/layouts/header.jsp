@@ -1,5 +1,6 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="model.khachHang" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Logo</a>
@@ -8,14 +9,33 @@
     </button>
     <div class="collapse navbar-collapse" id="mynavbar">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="#">Trang chủ</a></li>
+        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/trangChu Controller">Trang chủ</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Giỏ hàng</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Thanh toán</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Lịch sử mua hàng</a></li>
-        <li class="nav-item"><a class="nav-link" href="dangNhapController">Đăng nhập</a></li>
+        <%
+            // Lấy khách hàng từ session
+            khachHang kh = (khachHang) session.getAttribute("khachHang"); 
+            if (kh == null) {
+        %>
+            <li class="nav-item">
+              <a class="nav-link" href="${pageContext.request.contextPath}/dangNhapController">Đăng nhập</a>
+            </li>
+        <%
+            } else {
+        %>
+            <li class="nav-item">
+              <a class="nav-link">Xin chào <%= kh.getHoTen() %>!</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="${pageContext.request.contextPath}/dangXuatController">Đăng xuất</a>
+            </li>
+        <%
+            }
+        %>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="text" placeholder="Search">
+      <form class="d-flex" action="trangChuController">
+        <input class="form-control me-2" type="text" placeholder="Search" name="timKiem">
         <button class="btn btn-primary" type="submit">Search</button>
       </form>
     </div>

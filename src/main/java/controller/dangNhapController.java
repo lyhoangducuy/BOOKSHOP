@@ -38,7 +38,7 @@ public class dangNhapController extends HttpServlet {
             	rd.forward(request, response);
             	return;
         	}
-        	if (dangNhapSai>=3)
+        	if (dangNhapSai>=2)
         	{
         		session.setAttribute("hienCapCha",true);
         		Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
