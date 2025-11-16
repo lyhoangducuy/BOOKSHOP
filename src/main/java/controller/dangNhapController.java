@@ -8,6 +8,7 @@ import javax.servlet.http.*;
 
 import bo.khachHangBO;
 import model.khachHang;
+import nl.captcha.Captcha;
 
 @WebServlet("/dangNhapController")
 public class dangNhapController extends HttpServlet {
@@ -22,24 +23,56 @@ public class dangNhapController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
         	HttpSession session = request.getSession();
-
+        	String daDangNhap= (String)session.getAttribute("daDangNhap");
+        	Integer dangNhapSai=(Integer) session.getAttribute("dangNhapSai");
+        	if (daDangNhap!=null && daDangNhap.equals("1"))
+        	{
+        		request.getRequestDispatcher("trangChuController").forward(request, response);
+        		return;
+        	}
+        	if (dangNhapSai==null)
+        	{
+        		session.setAttribute("dangNhapSai", 0);
+        		dangNhapSai=0;
+        		RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangNhap.jsp");
+            	rd.forward(request, response);
+            	return;
+        	}
+        	if (dangNhapSai>=3)
+        	{
+        		session.setAttribute("hienCapCha",true);
+        		Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
+                String captchaAnswer = request.getParameter("traLoi");
+                 
+                if (captchaAnswer==null || captchaAnswer.trim().isEmpty())
+                {
+                	RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangNhap.jsp");
+                	rd.forward(request, response);
+                	return;
+                }
+                if (!captcha.isCorrect(captchaAnswer)) {
+                    request.setAttribute("captchaMsg", "Captcha không đúng!");
+                    request.getRequestDispatcher("/views/auth/dangNhap.jsp").forward(request, response);
+                    return;
+                }
+        		
+        	}
+        	
             String tendn = request.getParameter("txtUser");
             String matKhau = request.getParameter("txtPass");
-            
             khachHangBO khBO = new khachHangBO();
             khachHang kh = khBO.kiemTraDangNhap(tendn, matKhau);
-            if (session.getAttribute("khachHang")==null && kh==null)
-            {
-            	 RequestDispatcher rd = request.getRequestDispatcher("/views/auth/dangNhap.jsp");
-                 rd.forward(request, response);
-                 return;
-            }
             if (kh != null ) {
                 session.setAttribute("khachHang", kh);
+                session.setAttribute("dangNhapSai", 0);
+                session.setAttribute("hienCapCha", false);
                 session.setAttribute("daDangNhap", "1");
                 response.sendRedirect("trangChuController");
-            } else {
+            } 
+            if (kh==null){
                 request.setAttribute("msg", "Sai thông tin đăng nhập!");
+                dangNhapSai++;
+                session.setAttribute("dangNhapSai", dangNhapSai);
                 RequestDispatcher rd = request.getRequestDispatcher("/views/auth/dangNhap.jsp");
                 rd.forward(request, response); // login thất bại
             }

@@ -33,6 +33,16 @@
             <c:if test="${not empty msg}">
                 <span class="text-danger">${msg}</span>
             </c:if>
+			<c:if test="${sessionScope.hienCapCha == true}">
+			    <center>
+			        <img src="simpleCaptcha.jpg" />
+			        <input type="text" name="traLoi" class="form-control mt-2" placeholder="Nhập Captcha" required>
+			        
+			        <c:if test="${not empty captchaMsg}">
+			            <span class="text-danger">${captchaMsg}</span>
+			        </c:if>
+			    </center>
+			</c:if>
 
             <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
 
