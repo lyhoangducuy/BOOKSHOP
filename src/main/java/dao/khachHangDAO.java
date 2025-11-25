@@ -8,31 +8,41 @@ import model.ketNoi;
 import model.khachHang;
 
 public class khachHangDAO {
-	public khachHang kiemTraDangNhap(String tendn,String matKhau)throws Exception {
-		khachHang kh=null;
-		try {
-			ketNoi kn=new ketNoi();
-			kn.ketnoi();
-			String sql="select * from KhachHang where tendn=? and pass=?";
-			PreparedStatement ps=kn.cn.prepareStatement(sql);
-			
-			ps.setString(1, tendn);
-			ps.setString(2, matKhau);
-			
-			ResultSet rs=ps.executeQuery();
-			
-			if (rs.next()) {
-				kh=new khachHang(rs.getLong("makh"), rs.getString("hoten"), rs.getString("diachi"), rs.getString("sodt"), rs.getString("email"), rs.getString("tendn"), rs.getString("pass"));
-			}
-			rs.close();
-			ps.close();
-			kn.cn.close();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return kh;
+	public khachHang kiemTraDangNhap(String tendn, String matKhau) throws Exception {
+	    khachHang kh = null;
+	    try {
+	        ketNoi kn = new ketNoi();
+	        kn.ketnoi();
+
+	        String sql = "select * from KhachHang where tendn=? and pass=?";
+	        PreparedStatement ps = kn.cn.prepareStatement(sql);
+
+	        ps.setString(1, tendn);
+	        ps.setString(2, md5(matKhau)); // MÃ HÓA trước khi so sánh
+
+	        ResultSet rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            kh = new khachHang(
+	                rs.getLong("makh"),
+	                rs.getString("hoten"),
+	                rs.getString("diachi"),
+	                rs.getString("sodt"),
+	                rs.getString("email"),
+	                rs.getString("tendn"),
+	                rs.getString("pass")
+	            );
+	        }
+	        rs.close();
+	        ps.close();
+	        kn.cn.close();
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return kh;
 	}
+
 	public static String md5(String input) throws Exception {
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] hash = md.digest(input.getBytes("UTF-8"));

@@ -25,6 +25,7 @@ public class dangNhapController extends HttpServlet {
         	HttpSession session = request.getSession();
         	String daDangNhap= (String)session.getAttribute("daDangNhap");
         	Integer dangNhapSai=(Integer) session.getAttribute("dangNhapSai");
+        	
         	if (daDangNhap!=null && daDangNhap.equals("1"))
         	{
         		request.getRequestDispatcher("trangChuController").forward(request, response);
@@ -38,7 +39,7 @@ public class dangNhapController extends HttpServlet {
             	rd.forward(request, response);
             	return;
         	}
-        	if (dangNhapSai>=2)
+        	if (dangNhapSai>=3)
         	{
         		session.setAttribute("hienCapCha",true);
         		Captcha captcha = (Captcha) session.getAttribute(Captcha.NAME);
@@ -62,12 +63,18 @@ public class dangNhapController extends HttpServlet {
             String matKhau = request.getParameter("txtPass");
             khachHangBO khBO = new khachHangBO();
             khachHang kh = khBO.kiemTraDangNhap(tendn, matKhau);
+            if (tendn == null || matKhau == null) {
+                RequestDispatcher rd = request.getRequestDispatcher("/views/auth/dangNhap.jsp");
+                rd.forward(request, response);
+                return;
+            }
             if (kh != null ) {
                 session.setAttribute("khachHang", kh);
                 session.setAttribute("dangNhapSai", 0);
                 session.setAttribute("hienCapCha", false);
                 session.setAttribute("daDangNhap", "1");
                 response.sendRedirect("trangChuController");
+                return;
             } 
             if (kh==null){
                 request.setAttribute("msg", "Sai thông tin đăng nhập!");

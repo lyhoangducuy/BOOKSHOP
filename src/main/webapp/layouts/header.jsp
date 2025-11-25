@@ -9,10 +9,11 @@
     </button>
     <div class="collapse navbar-collapse" id="mynavbar">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/trangChu Controller">Trang chủ</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Giỏ hàng</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Thanh toán</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Lịch sử mua hàng</a></li>
+        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/trangChuController">Trang chủ</a></li>
+        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/gioHangController">Giỏ hàng</a></li>
+        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/thanhToanController">Thanh toán</a></li>
+        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/lichSuMuaHangController">Lịch sử mua hàng</a></li>
+        
         <%
             // Lấy khách hàng từ session
             khachHang kh = (khachHang) session.getAttribute("khachHang"); 
@@ -20,6 +21,7 @@
         %>
             <li class="nav-item">
               <a class="nav-link" href="${pageContext.request.contextPath}/dangNhapController">Đăng nhập</a>
+               <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/dangKyController">Đăng ký</a></li>
             </li>
         <%
             } else {

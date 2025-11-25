@@ -1,0 +1,92 @@
+/* ================= BASE ================= */
+body {
+    background: #f5f5f5;
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* ================= CONTAINER ================= */
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+/* ================= HEADER BẢNG ================= */
+.row.bg-light.fw-bold {
+    background-color: #f8f9fa;
+    border-radius: 6px 6px 0 0;
+}
+
+/* ================= DÒNG DỮ LIỆU ================= */
+.row.py-2 {
+    background-color: #fff;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+/* Hover nhẹ cho từng dòng */
+.row.py-2:hover {
+    transform: translateY(-2px);
+    background-color: #e9f5ff;
+}
+
+/* ================= CỘT ================= */
+.row .col-sm-2, 
+.row .col-sm-3, 
+.row .col-3, 
+.row .col-6 {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 6px 12px;
+    word-break: break-word;
+}
+
+/* ================= TRẠNG THÁI ================= */
+.row .col-sm-3:last-child {
+    font-weight: bold;
+}
+
+/* ================= THÔNG BÁO KHÔNG CÓ ĐƠN ================= */
+.row .col.text-center.text-muted {
+    font-style: italic;
+    padding: 12px 0;
+    color: #888;
+}
+
+/* ================= PHÂN TRANG ================= */
+.pagination-container {
+    margin-top: 20px;
+}
+.pagination-container a {
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #0d6efd;
+    color: #0d6efd;
+    transition: all 0.2s;
+}
+.pagination-container a.btn-primary {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+.pagination-container a:hover {
+    background-color: #0b5ed7;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 576px) {
+    .row.bg-light.fw-bold,
+    .row.py-2 {
+        font-size: 14px;
+    }
+}

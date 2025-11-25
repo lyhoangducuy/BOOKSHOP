@@ -43,7 +43,7 @@ public class sach {
 	public void setSoLuong(int soLuong) {
 		this.soLuong = soLuong;
 	}
-	public double getGia() {
+	public long getGia() {
 		return gia;
 	}
 	public void setGia(long gia) {

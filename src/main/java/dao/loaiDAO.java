@@ -23,6 +23,9 @@ public class loaiDAO {
 			ten.setMaLoai(rs.getString("maloai"));
 			ten.setTenLoai(rs.getString("tenloai"));
 		}
+		rs.close();
+		ps.close();
+		kn.cn.close();
 		return ten;
 	}
 	public ArrayList<loai> getLoai() throws Exception{
@@ -35,6 +38,9 @@ public class loaiDAO {
 		ResultSet rs=ps.executeQuery();
 		while (rs.next())
 			ds.add(new loai(rs.getString("maloai"), rs.getString("tenloai")));
+		rs.close();
+		ps.close();
+		kn.cn.close();
 		return ds;
 	}
 }
