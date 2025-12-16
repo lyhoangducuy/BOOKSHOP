@@ -12,18 +12,19 @@ import model.sach;
 
 public class sachDAO {
 	ArrayList<sach> ds=new ArrayList<sach>();
-	// Lấy sách theo loại có phân trang
-	public ArrayList<sach> getSachTheoLoai(String maloai, int trang, int pageSize) throws Exception {
+	// Lấy sách theo loại có phân trang  
+	public ArrayList<sach> getSachTheoLoai(String maloai, int trang) throws Exception {
 	    ArrayList<sach> dsTrang = new ArrayList<>();
 	    ketNoi kn = new ketNoi();
 	    kn.ketnoi();
 
-	    String sql = "SELECT * FROM sach WHERE maloai=? ORDER BY masach OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+	    String sql = "SELECT * FROM sach WHERE maloai LIKE ? "
+	               + "ORDER BY masach "
+	               + "OFFSET ? ROWS FETCH NEXT 8 ROWS ONLY";
 	    PreparedStatement ps = kn.cn.prepareStatement(sql);
-	    ps.setString(1, maloai);
-	    ps.setInt(2, (trang-1)*pageSize);
-	    ps.setInt(3, pageSize);
-
+	    ps.setString(1, "%" + maloai + "%");
+	    int offset = 8 * trang - 8;
+	    ps.setInt(2, offset);
 	    ResultSet rs = ps.executeQuery();
 	    while(rs.next()) {
 	        dsTrang.add(new sach(rs.getString("masach"), rs.getString("tensach"), rs.getInt("soluong"),
@@ -32,6 +33,37 @@ public class sachDAO {
 	    }
 	    rs.close(); ps.close(); kn.cn.close();
 	    return dsTrang;
+	}
+	public ArrayList<sach> getSachTheoTen(String ten) throws Exception {
+	    ArrayList<sach> dsSach = new ArrayList<>();
+	    ketNoi kn = new ketNoi();
+	    kn.ketnoi();
+
+	    // Sử dụng LIKE để tìm tên sách chứa từ khóa (không phân biệt chữ hoa/chữ thường)
+	    String sql = "SELECT * FROM sach WHERE tensach LIKE ? ORDER BY masach";
+	    PreparedStatement ps = kn.cn.prepareStatement(sql);
+	    ps.setString(1, "%" + ten + "%"); // %ten% nghĩa là chứa từ khóa
+
+	    ResultSet rs = ps.executeQuery();
+	    while(rs.next()) {
+	        dsSach.add(new sach(
+	                rs.getString("masach"),
+	                rs.getString("tensach"),
+	                rs.getInt("soluong"),
+	                rs.getLong("gia"),
+	                rs.getString("maloai"),
+	                rs.getInt("sotap"),
+	                rs.getString("anh"),
+	                rs.getTimestamp("NgayNhap").toLocalDateTime().toLocalDate(),
+	                rs.getString("tacgia")
+	        ));
+	    }
+
+	    rs.close();
+	    ps.close();
+	    kn.cn.close();
+
+	    return dsSach;
 	}
 
 	// Tổng số sách theo loại
@@ -47,19 +79,18 @@ public class sachDAO {
 	    rs.close(); ps.close(); kn.cn.close();
 	    return total;
 	}
-
-	// Lấy sách theo tên có phân trang
-	public ArrayList<sach> getSachTheoTen(String tenNhap, int trang, int pageSize) throws Exception {
+	public ArrayList<sach> getSachTheoTen(String tenNhap, int trang) throws Exception {
 	    ArrayList<sach> dsTrang = new ArrayList<>();
 	    ketNoi kn = new ketNoi();
 	    kn.ketnoi();
 
-	    String sql = "SELECT * FROM sach WHERE tensach LIKE ? ORDER BY masach OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+	    String sql = "SELECT * FROM sach WHERE tensach LIKE ? "
+	               + "ORDER BY masach "
+	               + "OFFSET ? ROWS FETCH NEXT 8 ROWS ONLY";
 	    PreparedStatement ps = kn.cn.prepareStatement(sql);
 	    ps.setString(1, "%" + tenNhap + "%");
-	    ps.setInt(2, (trang-1)*pageSize);
-	    ps.setInt(3, pageSize);
-
+	    int offset = 8 * trang - 8;
+	    ps.setInt(2, offset);
 	    ResultSet rs = ps.executeQuery();
 	    while(rs.next()) {
 	        dsTrang.add(new sach(rs.getString("masach"), rs.getString("tensach"), rs.getInt("soluong"),
@@ -133,11 +164,11 @@ public class sachDAO {
 
 	    // SQL phân trang theo công thức 6*i - 6
 	    String sql = "SELECT * FROM sach ORDER BY masach "
-	               + "OFFSET ? ROWS FETCH NEXT 6 ROWS ONLY";
+	               + "OFFSET ? ROWS FETCH NEXT 8 ROWS ONLY";
 
 	    PreparedStatement ps = kn.cn.prepareStatement(sql);
 
-	    int offset = 6 * trang - 6; // công thức bạn đưa
+	    int offset = 8 * trang - 8; // công thức bạn đưa
 	    ps.setInt(1, offset);
 
 	    ResultSet rs = ps.executeQuery();
@@ -178,5 +209,143 @@ public class sachDAO {
 	    kn.cn.close();
 	    return total;
 	}
+	public int updateSach(sach s) throws Exception {
+	    ketNoi kn = new ketNoi();
+	    kn.ketnoi();
+
+	    String sql = "UPDATE sach SET tensach=?, soluong=?, gia=?, maloai=?, sotap=?, anh=?, ngaynhap=?, tacgia=? " +
+	                 "WHERE masach=?";
+
+	    PreparedStatement ps = kn.cn.prepareStatement(sql);
+
+	    ps.setString(1, s.getTenSach());
+	    ps.setInt(2, s.getSoLuong());
+	    ps.setLong(3, s.getGia());
+	    ps.setString(4, s.getMaLoai());
+	    ps.setInt(5, s.getSoTap());
+	    ps.setString(6, s.getAnh());
+	    ps.setDate(7, java.sql.Date.valueOf(s.getNgayNhap())); // LocalDate → SQL
+	    ps.setString(8, s.getTacGia());
+
+	    ps.setString(9, s.getMaSach());  // WHERE masach = ?
+
+	    int kq = ps.executeUpdate();
+
+	    ps.close();
+	    kn.cn.close();
+
+	    return kq;
+	}
+	public int deleteSach(String masach) throws Exception {
+        ketNoi kn = new ketNoi();
+        kn.ketnoi();
+
+        String sql = "DELETE FROM sach WHERE masach = ?";
+        PreparedStatement ps = kn.cn.prepareStatement(sql);
+
+        ps.setString(1, masach);
+
+        int kq = ps.executeUpdate();
+
+        ps.close();
+        kn.cn.close();
+
+        return kq;
+    }
+	public int insertSach(sach s) throws Exception {
+	    ketNoi kn = new ketNoi();
+	    kn.ketnoi();
+
+	    String sql = "INSERT INTO sach (masach, tensach, soluong, gia, maloai, sotap, anh, ngaynhap, tacgia) "
+	               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+	    PreparedStatement ps = kn.cn.prepareStatement(sql);
+
+	    ps.setString(1, s.getMaSach());
+	    ps.setString(2, s.getTenSach());
+	    ps.setInt(3, s.getSoLuong());
+	    ps.setLong(4, s.getGia());
+	    ps.setString(5, s.getMaLoai());
+	    ps.setInt(6, s.getSoTap());
+	    ps.setString(7, s.getAnh());
+	    ps.setDate(8, java.sql.Date.valueOf(s.getNgayNhap()));
+	    ps.setString(9, s.getTacGia());
+
+	    int result = ps.executeUpdate();
+
+	    ps.close();
+	    kn.cn.close();
+
+	    return result;
+	}
+	public int tangSoLuong(String maSach, int n) throws Exception {
+	    ketNoi kn = new ketNoi();
+	    kn.ketnoi();
+
+	    String sql = "UPDATE sach SET soluong = soluong + ? WHERE masach = ?";
+	    PreparedStatement ps = kn.cn.prepareStatement(sql);
+
+	    ps.setInt(1, n);
+	    ps.setString(2, maSach);
+
+	    int kq = ps.executeUpdate();
+
+	    ps.close();
+	    kn.cn.close();
+
+	    return kq;
+	}
+	public int giamSoLuong(String maSach, int n) throws Exception {
+	    ketNoi kn = new ketNoi();
+	    kn.ketnoi();
+
+	    String sql = "UPDATE sach SET soluong = soluong - ? "
+	               + "WHERE masach = ? AND soluong >= ?";
+	    PreparedStatement ps = kn.cn.prepareStatement(sql);
+
+	    ps.setInt(1, n);
+	    ps.setString(2, maSach);
+	    ps.setInt(3, n);
+
+	    int kq = ps.executeUpdate();
+
+	    ps.close();
+	    kn.cn.close();
+
+	    return kq;
+	}
+	public int capNhatTonKho(String maSach, int delta) throws Exception {
+	    ketNoi kn = new ketNoi();
+	    kn.ketnoi();
+
+	    String sql;
+	    PreparedStatement ps;
+
+	    if (delta > 0) {
+	        // Mua thêm → trừ kho
+	        sql = "UPDATE sach SET soluong = soluong - ? "
+	            + "WHERE masach = ? AND soluong >= ?";
+	        ps = kn.cn.prepareStatement(sql);
+	        ps.setInt(1, delta);
+	        ps.setString(2, maSach);
+	        ps.setInt(3, delta);
+	    } else {
+	        // Trả bớt → cộng kho
+	        sql = "UPDATE sach SET soluong = soluong + ? "
+	            + "WHERE masach = ?";
+	        ps = kn.cn.prepareStatement(sql);
+	        ps.setInt(1, Math.abs(delta));
+	        ps.setString(2, maSach);
+	    }
+
+	    int kq = ps.executeUpdate();
+
+	    ps.close();
+	    kn.cn.close();
+	    return kq;
+	}
+
+
+
 
 }

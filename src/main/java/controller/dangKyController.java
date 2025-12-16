@@ -55,23 +55,31 @@ public class dangKyController extends HttpServlet {
 		}
 		
 		khachHangBO khBO=new khachHangBO();
-		Boolean check=khBO.taoKhachHang(tendn, hovaten, diachi, sdt, email, matkhau);
-		
-		if (check==false && matkhau!=null && tendn!=null && nhaplai!=null)
-		{
-			request.setAttribute("msg3", "Tên người dùng đã tồn tại !");
-			RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangKy.jsp");
-			rd.forward(request, response);
-			return;
-		}else if (check==true){
-			request.setAttribute("msg3", "Tạo tài khoản thành công !");
-			RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangKy.jsp");
-			rd.forward(request, response);
-			return;
-		}else {
-			RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangKy.jsp");
-			rd.forward(request, response);
+		Boolean check;
+		try {
+			check = khBO.taoKhachHang(tendn, hovaten, diachi, sdt, email, matkhau);
+			if (check==false && matkhau!=null && tendn!=null && nhaplai!=null)
+			{
+				request.setAttribute("msg3", "Tên người dùng đã tồn tại !");
+				RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangKy.jsp");
+				rd.forward(request, response);
+				return;
+			}else if (check==true){
+				request.setAttribute("msg3", "Tạo tài khoản thành công !");
+				khBO.taoVaiTro(tendn, matkhau, false);
+				RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangKy.jsp");
+				rd.forward(request, response);
+				return;
+			}else {
+				RequestDispatcher rd=request.getRequestDispatcher("/views/auth/dangKy.jsp");
+				rd.forward(request, response);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		
 	}
 
 }

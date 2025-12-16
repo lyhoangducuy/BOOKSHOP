@@ -37,7 +37,7 @@ public class sach {
 	public void setTenSach(String tenSach) {
 		this.tenSach = tenSach;
 	}
-	public long getSoLuong() {
+	public int getSoLuong() {
 		return soLuong;
 	}
 	public void setSoLuong(int soLuong) {

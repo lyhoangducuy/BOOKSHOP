@@ -57,48 +57,59 @@
             </div>
 
             <!-- PHÂN TRANG -->
-            <div class="pagination-container mt-3 text-center">
-                <%
-                    int totalRows = (int) request.getAttribute("totalRows");
-                    int trangHienTai = (int) request.getAttribute("trangHienTai");
-                    int pageSize = (int) request.getAttribute("pageSize");
-                    int soTrang = (int)Math.ceil((double)totalRows / pageSize);
+			<div class="pagination-container mt-3 text-center">
+			<%
+			    int totalRows = (int) request.getAttribute("totalRows");
+			    int trangHienTai = (int) request.getAttribute("trangHienTai");
+			
+			    int pageSize = 8; // CỐ ĐỊNH, không truyền nữa
+			    int soTrang = (int) Math.ceil((double) totalRows / pageSize);
+			
+			    int startPage = Math.max(1, trangHienTai - 2);
+			    int endPage = Math.min(soTrang, trangHienTai + 2);
+			
+			    String queryString = "";
+			    if (request.getParameter("maloai") != null)
+			        queryString += "&maloai=" + request.getParameter("maloai");
+			    if (request.getParameter("timKiem") != null)
+			        queryString += "&timKiem=" + request.getParameter("timKiem");
+			%>
+			
+			<!-- Nút Previous -->
+			<% if (trangHienTai > 1) { %>
+			    <a href="trangChuController?page=<%=trangHienTai - 1%><%=queryString%>"
+			       class="btn btn-sm btn-outline-primary mx-1">&laquo;</a>
+			<% } %>
+			
+			<!-- Trang đầu -->
+			<% if (startPage > 1) { %>
+			    <a href="trangChuController?page=1<%=queryString%>"
+			       class="btn btn-sm btn-outline-primary mx-1">1</a>
+			    <% if (startPage > 2) { %> ... <% } %>
+			<% } %>
+			
+			<!-- Các trang giữa -->
+			<% for (int i = startPage; i <= endPage; i++) { %>
+			    <a href="trangChuController?page=<%=i%><%=queryString%>"
+			       class="btn btn-sm <%= (i == trangHienTai) ? "btn-primary" : "btn-outline-primary" %> mx-1">
+			        <%=i%>
+			    </a>
+			<% } %>
+			
+			<!-- Trang cuối -->
+			<% if (endPage < soTrang) { %>
+			    <% if (endPage < soTrang - 1) { %> ... <% } %>
+			    <a href="trangChuController?page=<%=soTrang%><%=queryString%>"
+			       class="btn btn-sm btn-outline-primary mx-1"><%=soTrang%></a>
+			<% } %>
+			
+			<!-- Nút Next -->
+			<% if (trangHienTai < soTrang) { %>
+			    <a href="trangChuController?page=<%=trangHienTai + 1%><%=queryString%>"
+			       class="btn btn-sm btn-outline-primary mx-1">&raquo;</a>
+			<% } %>
+			</div>
 
-                    int startPage = Math.max(1, trangHienTai - 2);
-                    int endPage = Math.min(soTrang, trangHienTai + 2);
-
-                    String queryString = "";
-                    if(request.getParameter("maloai") != null)
-                        queryString += "&maloai=" + request.getParameter("maloai");
-                    if(request.getParameter("timKiem") != null)
-                        queryString += "&timKiem=" + request.getParameter("timKiem");
-                %>
-
-                <% if(trangHienTai > 1) { %>
-                    <a href="trangChuController?page=<%=trangHienTai-1%><%=queryString%>" class="btn btn-sm btn-outline-primary mx-1">&laquo;</a>
-                <% } %>
-
-                <% if(startPage > 1) { %>
-                    <a href="trangChuController?page=1<%=queryString%>" class="btn btn-sm btn-outline-primary mx-1">1</a>
-                    <% if(startPage > 2) { %> ... <% } %>
-                <% } %>
-
-                <% for(int i = startPage; i <= endPage; i++) { %>
-                    <a href="trangChuController?page=<%=i%><%=queryString%>" 
-                       class="btn btn-sm <%= (i == trangHienTai) ? "btn-primary" : "btn-outline-primary" %> mx-1">
-                        <%=i%>
-                    </a>
-                <% } %>
-
-                <% if(endPage < soTrang) { %>
-                    <% if(endPage < soTrang - 1) { %> ... <% } %>
-                    <a href="trangChuController?page=<%=soTrang%><%=queryString%>" class="btn btn-sm btn-outline-primary mx-1"><%=soTrang%></a>
-                <% } %>
-
-                <% if(trangHienTai < soTrang) { %>
-                    <a href="trangChuController?page=<%=trangHienTai+1%><%=queryString%>" class="btn btn-sm btn-outline-primary mx-1">&raquo;</a>
-                <% } %>
-            </div>
         </div>
     </div>
 </div>

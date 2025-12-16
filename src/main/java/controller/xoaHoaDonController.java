@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import bo.chiTietHoaDonBO;
 import bo.hoaDonBO;
+import bo.sachBO;
+import model.chiTietHoaDon;
 
 /**
  * Servlet implementation class xoaHoaDonController
@@ -30,24 +33,39 @@ public class xoaHoaDonController extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String maHD=request.getParameter("mahdx");
-		hoaDonBO hBO=new hoaDonBO();
-		chiTietHoaDonBO cBO=new chiTietHoaDonBO();
-		try {
-			hBO.xoaHoaDonTheoMaHoaDOn(Long.parseLong(maHD), false);
-			cBO.xoaChiTietHoaDonTheoMaHoaDon(Long.parseLong(maHD), false);
-			RequestDispatcher rd=request.getRequestDispatcher("thanhToanController");
-			rd.forward(request, response);
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String maHD = request.getParameter("mahdx");
+
+        hoaDonBO hBO = new hoaDonBO();
+        chiTietHoaDonBO ctBO = new chiTietHoaDonBO();
+        sachBO sBO = new sachBO();
+
+        try {
+            long mahd = Long.parseLong(maHD);
+
+            // 1️⃣ Lấy toàn bộ chi tiết hóa đơn
+            ArrayList<chiTietHoaDon> dsCT = ctBO.timChiTietHoaDonTheoMaHoaDon(mahd);
+
+            // 2️⃣ Trả sách về kho
+            for (chiTietHoaDon ct : dsCT) {
+                sBO.capNhatTonKho(ct.getMaSach(), -ct.getSoLuongMua());
+            }
+
+            // 3️⃣ Xóa chi tiết hóa đơn
+            ctBO.xoaChiTietHoaDonTheoMaHoaDon(mahd, false);
+
+            // 4️⃣ Xóa hóa đơn
+            hBO.xoaHoaDonTheoMaHoaDOn(mahd, false);
+
+            response.sendRedirect("thanhToanController");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

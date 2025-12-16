@@ -8,6 +8,18 @@ import model.ketNoi;
 import model.khachHang;
 
 public class khachHangDAO {
+	public static String md5(String input) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] hash = md.digest(input.getBytes("UTF-8"));
+        
+        // Chuyển sang chuỗi hex
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hash) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+	
 	public khachHang kiemTraDangNhap(String tendn, String matKhau) throws Exception {
 	    khachHang kh = null;
 	    try {
@@ -43,17 +55,7 @@ public class khachHangDAO {
 	    return kh;
 	}
 
-	public static String md5(String input) throws Exception {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] hash = md.digest(input.getBytes("UTF-8"));
-        
-        // Chuyển sang chuỗi hex
-        StringBuilder sb = new StringBuilder();
-        for (byte b : hash) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
-    }
+	
 	public boolean taoKhachHang(String tendn, String hoten, String diachi, String sodt, String email, String pass) {
 	    try {
 	        ketNoi kn = new ketNoi();

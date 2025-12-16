@@ -25,7 +25,6 @@ public class trangChuController extends HttpServlet {
 
         String maloai = request.getParameter("maloai");
         String timKiem = request.getParameter("timKiem");
-
         int trang = 1; 
         String pageParam = request.getParameter("page");
         if (pageParam != null && !pageParam.trim().isEmpty()) {
@@ -37,21 +36,19 @@ public class trangChuController extends HttpServlet {
             }
         }
 
-        int pageSize = 6; // số sách mỗi trang
-
         try {
             ArrayList<sach> dssach;
             int totalRows;
 
             
             if (timKiem != null && !timKiem.trim().isEmpty()) {
-                dssach = sbo.getSachTheoTen(timKiem, trang, pageSize);
+                dssach = sbo.getSachTheoTen(timKiem, trang);
                 totalRows = sbo.getTotalSachTheoTen(timKiem);
             } else if (maloai != null && !maloai.trim().isEmpty()) {
-                dssach = sbo.getSachTheoLoai(maloai, trang, pageSize);
+                dssach = sbo.getSachTheoLoai(maloai, trang);
                 totalRows = sbo.getTotalSachTheoLoai(maloai);
             } else {
-                dssach = sbo.getSachTheoTrang(trang, pageSize);
+                dssach = sbo.getSachTheoTrang(trang);
                 totalRows = sbo.getTotalSach();
             }
 
@@ -59,7 +56,6 @@ public class trangChuController extends HttpServlet {
             request.setAttribute("dssach", dssach);
             request.setAttribute("trangHienTai", trang);
             request.setAttribute("totalRows", totalRows);
-            request.setAttribute("pageSize", pageSize);
 
             RequestDispatcher rd = request.getRequestDispatcher("/views/trangChu.jsp");
             rd.forward(request, response);

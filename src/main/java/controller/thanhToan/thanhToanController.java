@@ -1,4 +1,4 @@
-package controller;
+package controller.thanhToan;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -15,11 +15,14 @@ import javax.servlet.http.HttpSession;
 import dao.hoaDonDAO;
 import dao.chiTietHoaDonDAO;
 import model.gioHang;
+import model.gioHangSach;
 import model.hoaDon;
 import model.khachHang;
 import bo.chiTietHoaDonBO;
 import bo.gioHangBO;
+import bo.gioHangSachBO;
 import bo.hoaDonBO;
+import bo.sachBO;
 
 @WebServlet("/thanhToanController")
 public class thanhToanController extends HttpServlet {
@@ -42,13 +45,24 @@ public class thanhToanController extends HttpServlet {
     				hoaDon hd = hdBO.themHoaDon(kh.getMakh());
         			
 	    			chiTietHoaDonBO cBO=new chiTietHoaDonBO();
-	    	    	gioHangBO gh= (gioHangBO)session.getAttribute("gioHang");
-	    			for (gioHang g:gh.getGioHang())
+	    	    	ArrayList<gioHangSach> gh= (ArrayList<gioHangSach>)session.getAttribute("gioHang");
+	    	    	sachBO sBO=new sachBO();
+	    			for (gioHangSach g:gh)
 	    			{
-	    				cBO.themChiTietHoaDon(hd.getMaHoaDon(),g.getMaSach() , g.getSoluong());
+	    				if (sBO.getSachTheoMa(g.getMaSach()).getSoLuong()>=g.getSoLuong()) {
+	    					sBO.giamSoLuong(g.getMaSach(), g.getSoLuong());
+	    					cBO.themChiTietHoaDon(hd.getMaHoaDon(),g.getMaSach() , g.getSoLuong());
+	    				}else {
+	    					
+	    				}
 	    			}
+	    			gioHangSachBO bb=new gioHangSachBO();
+	    			gioHangBO gio=new gioHangBO();
 	    			session.removeAttribute("gioHang");
+	    			long mgio=gio.getGioHangTheoMaKH(kh.getMakh()).getMaGioHang();
+	    			bb.xoaAll(mgio);
 	    			request.setAttribute("mahd", hd.getMaHoaDon());
+	    			
 	    			
 	    			
     			}else {

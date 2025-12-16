@@ -1,3 +1,6 @@
+<%@page import="model.khachHang"%>
+<%@page import="bo.gioHangSachBO"%>
+<%@page import="model.gioHangSach"%>
 <%@page import="bo.gioHangBO"%>
 <%@page import="model.gioHang"%>
 <%@page import="java.util.ArrayList"%>
@@ -15,52 +18,78 @@
 </head>
 <body>
 
-<jsp:include page="../layouts/header.jsp"/>
+	<jsp:include page="../layouts/header.jsp"/>
+	<div class="container mt-4">
+	<%
+	    ArrayList<gioHangSach> ds = (ArrayList<gioHangSach>) session.getAttribute("gioHang");
+	    gioHangSachBO ghsBo = new gioHangSachBO();
+	    long magh = -1;
+	    if(ds == null || ds.isEmpty()) {
+	%>
+	    <div class="alert alert-info text-center">Giỏ hàng rỗng</div>
+	    <div class="text-center">
+	        <a href="trangChuController" class="btn btn-primary">Quay về trang chủ</a>
+	    </div>
+	<% } else { %>
+	<% for(gioHangSach g : ds) { %>
+	<div class="row mb-3 align-items-center border-bottom py-2">
+	    <div class="col-1 text-center">
+	        <input type="checkbox" name="cxoa" value="<%= g.getMaSach() %>">
+	    </div>
+	
+	    <div class="col-2 text-center">
+	        <img src="<%= g.getMaSach()	 %>" width="50" class="img-thumbnail">
+	    </div>
+	
+	    <div class="col-3">
+	        <strong><%= g.getDonGia() %> VNĐ</strong>
+	    </div>
+	
+	
+	    <div class="col-3 text-center">
+	    	<form action="suaGioHangController" method="post">
+	    		
+			    <input type="number" name="soluong" value="<%= g.getSoLuong() %>" min="1"
+			           style="width:60px; display:inline-block; margin-right:5px;">
+			    <input type="hidden" name="maSach" value="<%= g.getMaSach() %>">
+			    <input type="hidden" name="magh" value="<%= g.getMaGioHang() %>">
+			    <button type="submit" class="btn btn-sm btn-primary">Sửa</button>
+			</form>
 
-<div class="container mt-4">
-<%
-    gioHangBO ds = (gioHangBO) session.getAttribute("gioHang");
-    if(ds == null || ds.getGioHang().isEmpty()) {
+	    </div>
+	
+	    <div class="col-2 text-center">
+	        <a href="xoaChonController?maSach=<%=g.getMaSach()%>&magh=<%=g.getMaGioHang()%>" 
+	           class="btn btn-sm btn-danger">Xóa</a>
+	    </div>
+	</div>
+	<% magh = g.getMaGioHang(); } %>
+	
+	<div class="d-flex justify-content-between align-items-center mt-4">
+	    <button type="submit" name="xoaCheckBox" value="ok" class="btn btn-warning">
+	        Xóa chọn
+	    </button>
+	    <% if (magh != -1) { %>
+	    <%
+    long tongTien = 0;
+    for (gioHangSach g : ds) {
+        tongTien += g.getDonGia() * g.getSoLuong();
+    }
 %>
-    <div class="alert alert-info text-center">Giỏ hàng rỗng</div>
-    <div class="text-center">
-        <a href="trangChuController" class="btn btn-primary">Quay về trang chủ</a>
-    </div>
-<% } else { %>
 
-<form action="suaXoaGioHangController" method="post">
-    <% for(gioHang g : ds.getGioHang()) { %>
-    <div class="row mb-3 align-items-center border-bottom py-2">
-        <div class="col-sm-1 text-center">
-            <input type="checkbox" name="cxoa" value="<%=g.getMaSach()%>">
-        </div>
-        <div class="col-sm-2 text-center">
-            <img src="<%=g.getAnh()%>" width="50" class="img-thumbnail">
-        </div>
-        <div class="col-sm-3">
-            <strong><%=g.getTenSach()%></strong>
-        </div>
-        <div class="col-sm-1 text-center"><%=g.getGia()%></div>
-        <div class="col-sm-1 text-center"><%=g.getSoluong()%></div>
-        <div class="col-sm-3 text-center">
-            <input type="number" name="<%=g.getMaSach()%>" value="<%=g.getSoluong()%>" style="width:60px" min="1">
-            <button type="submit" name="butSua" value="<%=g.getMaSach()%>" class="btn btn-sm btn-success">+</button>
-        </div>
-        <div class="col-sm-1 text-center">
-            <a href="suaXoaGioHangController?maSachXoaChon=<%=g.getMaSach()%>" class="btn btn-sm btn-danger">Xóa</a>
-        </div>
-    </div>
-    <% } %>
-
-    <div class="d-flex align-items-center gap-3 mt-4">
-        <button type="submit" name="xoaCheckBox" value="ok" class="btn btn-warning">Xóa chọn</button>
-        <a href="thanhToanController?thanhToan=true" class="btn btn-primary">Thanh toán</a>
-        <strong>Thành tiền: <%= ds.tongThanhTien() %> VNĐ</strong>
-    </div>
-</form>
-
-<% } %>
+<div class="text-end">
+    <strong>Thành tiền: <%= tongTien %> VNĐ</strong>
+    <a href="thanhToanController?thanhToan=true" class="btn btn-primary ms-3">
+        Thanh toán
+    </a>
 </div>
+
+	    <% } %>
+	</div>
+	
+	<% } %>
+	</div>
+
 
 </body>
 </html>

@@ -6,55 +6,71 @@ import dao.sachDAO;
 import model.sach;
 
 public class sachBO {
-    sachDAO sdao = new sachDAO();
-    ArrayList<sach> ds; // cache tất cả sách
+
+    sachDAO dao = new sachDAO();
 
     // Lấy tất cả sách
-    public ArrayList<sach> getSach() throws Exception {
-        if (ds == null)
-            ds = sdao.getSach(); // lưu cache
-        return ds;
+    public ArrayList<sach> getTatCaSach() throws Exception {
+        return dao.getSach();
     }
 
- // Theo loại phân trang
-    public ArrayList<sach> getSachTheoLoai(String maLoai, int trang, int pageSize) throws Exception {
-        return sdao.getSachTheoLoai(maLoai, trang, pageSize);
-    }
-    public int getTotalSachTheoLoai(String maLoai) throws Exception {
-        return sdao.getTotalSachTheoLoai(maLoai);
+    // Phân trang không tìm kiếm
+    public ArrayList<sach> getSachTheoTrang(int trang) throws Exception {
+        return dao.getSachTheoTrang(trang);
     }
 
-    // Theo tên phân trang
-    public ArrayList<sach> getSachTheoTen(String tenNhap, int trang, int pageSize) throws Exception {
-        return sdao.getSachTheoTen(tenNhap, trang, pageSize);
-    }
-    public int getTotalSachTheoTen(String tenNhap) throws Exception {
-        return sdao.getTotalSachTheoTen(tenNhap);
-    }
-
-
-
-    // Tìm sách theo mã
-    public sach getSachTheoMa(String masach) throws Exception {
-        return sdao.getSachTheoMa(masach);
-    }
-
-    // --- Mới: Lấy sách theo phân trang ---
-    public ArrayList<sach> getSachTheoTrang(int trang, int soLuongMoiTrang) throws Exception {
-        // sdao.getSachTheoTrang() hiện tại fix 6 sách mỗi trang, mình sẽ tạo động
-        ArrayList<sach> dsTrang = new ArrayList<>();
-        int offset = soLuongMoiTrang * (trang - 1);
-
-        for (sach s : getSach()) { // lấy từ cache ds
-            if (ds.indexOf(s) >= offset && ds.indexOf(s) < offset + soLuongMoiTrang) {
-                dsTrang.add(s);
-            }
-        }
-        return dsTrang;
-    }
-
-    // Tổng số sách (để tính số trang)
     public int getTotalSach() throws Exception {
-        return sdao.getTotalSach();
+        return dao.getTotalSach();
+    }
+
+    // Tìm kiếm theo tên (full)
+    public ArrayList<sach> timKiemSach(String keyword,int trang) throws Exception {
+        return dao.getSachTheoTen(keyword, trang); // lấy hết
+    }
+
+    // Tìm kiếm theo tên + phân trang
+    public ArrayList<sach> timKiemSachTheoTrang(String keyword,int trang) throws Exception {
+        return dao.getSachTheoTen(keyword, trang);
+    }
+
+    public int getTotalSachTheoTen(String keyword) throws Exception {
+        return dao.getTotalSachTheoTen(keyword);
+    }
+    public int getTotalSachTheoLoai(String maloai) throws Exception {
+    	return dao.getTotalSachTheoLoai(maloai);
+    }
+    public ArrayList<sach> getSachTheoLoai(String maloai, int trang) throws Exception {
+    	return dao.getSachTheoLoai(maloai, trang);
+    }
+    public ArrayList<sach> getSachTheoTen(String tenNhap, int trang) throws Exception {
+    	return dao.getSachTheoTen(tenNhap, trang);
+    }
+    // CRUD
+    public sach getSachTheoMa(String ma) throws Exception {
+        return dao.getSachTheoMa(ma);
+    }
+
+    public int insertSach(sach s) throws Exception {
+        return dao.insertSach(s);
+    }
+
+    public int updateSach(sach s) throws Exception {
+        return dao.updateSach(s);
+    }
+
+    public int deleteSach(String ma) throws Exception {
+        return dao.deleteSach(ma);
+    }
+    public ArrayList<sach> getSachTheoTen(String ten) throws Exception {
+    	return dao.getSachTheoTen(ten);
+    }
+    public int tangSoLuong(String maSach, int n) throws Exception {
+    	return dao.tangSoLuong(maSach, n);
+    }
+    public int giamSoLuong(String maSach, int n) throws Exception {
+    	return dao.giamSoLuong(maSach, n);
+    }
+    public int capNhatTonKho(String maSach, int delta) throws Exception {
+    	return dao.capNhatTonKho(maSach, delta);
     }
 }

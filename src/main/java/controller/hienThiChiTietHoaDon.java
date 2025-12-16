@@ -29,13 +29,12 @@ public class hienThiChiTietHoaDon extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd=request.getRequestDispatcher("/views/chiTietHoaDon.jsp");
+		
 		String mhd=(String)request.getParameter("mahd");
 		request.setAttribute("mahd",Long.parseLong(mhd));
-
-		System.out.println(mhd);
-		System.out.println("Hien thi");
+		RequestDispatcher rd=request.getRequestDispatcher("/views/chiTietHoaDon.jsp");
 		rd.forward(request, response);
+		
 	}
 
 	/**

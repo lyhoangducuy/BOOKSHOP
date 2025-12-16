@@ -7,7 +7,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 import bo.khachHangBO;
+import dao.vaiTroDAO;
 import model.khachHang;
+import model.vaiTro;
 import nl.captcha.Captcha;
 
 @WebServlet("/dangNhapController")
@@ -69,10 +71,29 @@ public class dangNhapController extends HttpServlet {
                 return;
             }
             if (kh != null ) {
-                session.setAttribute("khachHang", kh);
-                session.setAttribute("dangNhapSai", 0);
-                session.setAttribute("hienCapCha", false);
-                session.setAttribute("daDangNhap", "1");
+            	
+            	vaiTroDAO vtDao = new vaiTroDAO();
+                vaiTro vt = vtDao.kiemTraDangNhap(tendn, matKhau);
+
+                if (vt != null) {
+                    session.setAttribute("vaiTro", vt);
+                    session.setAttribute("khachHang", kh);
+                    session.setAttribute("dangNhapSai", 0);
+                    session.setAttribute("hienCapCha", false);
+                    session.setAttribute("daDangNhap", "1");
+
+                    if (vt.isQuyen()) {
+                        response.sendRedirect(request.getContextPath() + "/admin/trangChuAdminController");
+                    } else {
+                        // USER
+                        response.sendRedirect("trangChuController");
+                    }
+
+
+                    return;
+                
+                }
+
                 response.sendRedirect("trangChuController");
                 return;
             } 

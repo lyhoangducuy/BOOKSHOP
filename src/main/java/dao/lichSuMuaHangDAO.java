@@ -14,7 +14,7 @@ public class lichSuMuaHangDAO {
 	    ketNoi kn= new ketNoi();
 	    kn.ketnoi();
 	    //b2: Thiet lap cau lenh sql
-	    String sql= "select * from VlSu where makh=?";
+	    String sql= "select * from VlSu where makh=? and damua=1";
 	    PreparedStatement cmd= kn.cn.prepareStatement(sql);
 	    //b3: Truyen tham so vao cau lẹnh sql (neu co)
 	    cmd.setLong(1, makh);

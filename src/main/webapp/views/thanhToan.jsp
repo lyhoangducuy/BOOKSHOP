@@ -3,6 +3,9 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="model.khachHang"%>
 <%@page import="bo.hoaDonBO"%>
+<%@ page import="model.phuongThucThanhToan" %>
+
+<%@ page import="model.trangThaiHoaDon" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -25,12 +28,20 @@
     <%
         hoaDonBO ds = new hoaDonBO();
     	khachHang newkh=(khachHang) session.getAttribute("khachHang");
-        ArrayList<hoaDon> list = ds.timHoaDonTheoMaKh(newkh.getMakh());
+        ArrayList<hoaDon> list = ds.getDsHoaDonChuaMuaTheoMaKh(newkh.getMakh());
     %>
 
-    <h3 class="mb-3">Danh sách hóa đơn</h3>
+    <h3 class="mb-3">Danh sách hóa đơn chưa thanh toán</h3>
 
     <div class="row g-3"> 
+    	<%if (list==null || list.isEmpty()) {%>
+     	<div class="alert alert-info text-center">Danh sach trong</div>
+	    <div class="text-center">
+	        <a href="trangChuController" class="btn btn-primary">Quay về trang chủ</a>
+	    </div>
+	    <%
+	    return;
+    	} %>
         <% for (hoaDon hd : list) { 
         
         %>
@@ -46,16 +57,30 @@
                 <p>
                     Trạng thái: 
                     <span class="badge <%= hd.isDaMua() ? "bg-success" : "bg-warning text-dark" %>">
-                        <%= hd.isDaMua() ?	"Đã mua" : "Chưa mua" %>
+                        <%= hd.isDaMua() ?	"Đã mua" : "Chưa thanh toán" %>
                     </span>
                 </p>
-
+				<%long t=ds.getThanhTien(hd.getMaHoaDon()); %>
+                    <p><b>Tổng tiền:</b> <%= String.format("%,d", t) %> VNĐ</p>
                 <div class="d-flex justify-content-between mt-2">
                     <a class="btn btn-primary btn-sm" 
                        href="chiTietHoaDonController?mahd=<%=hd.getMaHoaDon()%>">
                         Xem chi tiết
                     </a>
-
+                    
+                    
+                    <%
+			            // Lấy khách hàng từ session
+			            khachHang kh = (khachHang) session.getAttribute("khachHang"); 
+			        %>
+                    
+					<form action="payment" method="post">
+						<input type="hidden" name="totalBill" value="<%=t%>">
+						<input type="hidden" name="idUser" value="<%=kh.getMakh()%>">
+						<input type="hidden" name="idOrder" value="<%=hd.getMaHoaDon()%>">
+						<button class="btn btn-primary" type="submit">Thanh toán</button>
+					</form>
+					
                     <a class="btn btn-danger btn-sm"
                        href="xoaHoaDonController?mahdx=<%=hd.getMaHoaDon()%>">
                         Xóa

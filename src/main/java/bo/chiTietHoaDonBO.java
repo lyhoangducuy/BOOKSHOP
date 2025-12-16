@@ -21,5 +21,13 @@ public class chiTietHoaDonBO {
 	public void themChiTietHoaDon(long maHoaDon, String maSach, int soLuong) throws Exception {
 		 cDAO.themChiTietHoaDon(maHoaDon, maSach, soLuong);
 	}
-	
+	public int suaSoLuongSachHoaDon(long mahd,String masach, int sl) throws Exception {
+		return cDAO.suaSoLuongSachHoaDon(mahd, masach, sl);
+	}
+	public void xoaSachChiTietHoaDon(long maHoaDon,String masach) throws Exception {
+		cDAO.xoaSachChiTietHoaDon(maHoaDon, masach);
+	}
+	public chiTietHoaDon timChiTietHoaDon(long maHoaDon, String maSach) throws Exception {
+		return cDAO.timChiTietHoaDon(maHoaDon, maSach);
+	}
 }
